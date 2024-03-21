@@ -1,0 +1,296 @@
+{% extends "base2.html" %}
+
+{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <script>
+    // Função para formatar o CPF
+    function formatarCPF(cpf) {
+        cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
+        cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); // Formata o CPF
+        return cpf;
+    }
+
+    // Função para validar o CPF
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
+        if (cpf.length !== 11 || cpf.match(/(\d)\1{10}/)) {
+            return false; // CPF inválido
+        }
+        let soma = 0;
+        for (let i = 0; i < 9; i++) {
+            soma += parseInt(cpf.charAt(i)) * (10 - i);
+        }
+        let resto = 11 - (soma % 11);
+        if (resto === 10 || resto === 11) {
+            resto = 0;
+        }
+        if (resto !== parseInt(cpf.charAt(9))) {
+            return false; // CPF inválido
+        }
+        soma = 0;
+        for (let i = 0; i < 10; i++) {
+            soma += parseInt(cpf.charAt(i)) * (11 - i);
+        }
+        resto = 11 - (soma % 11);
+        if (resto === 10 || resto === 11) {
+            resto = 0;
+        }
+        if (resto !== parseInt(cpf.charAt(10))) {
+            return false; // CPF inválido
+        }
+        return true; // CPF válido
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const cpfInput = document.getElementById('cpf');
+
+        cpfInput.addEventListener('input', function () {
+            // Formata o CPF conforme o usuário digita
+            cpfInput.value = formatarCPF(cpfInput.value);
+        });
+
+        cpfInput.addEventListener('change', function () {
+            // Valida o CPF quando o usuário finaliza a edição do campo
+            const cpfValue = cpfInput.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+            if (!validarCPF(cpfValue)) {
+                alert('CPF inválido! Por favor, digite um CPF válido.');
+                cpfInput.value = ''; // Limpa o campo em caso de CPF inválido
+            }
+        });
+    });
+
+    
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const cepInput = document.getElementById('cep');
+      const cidadeInput = document.getElementById('cidade');
+      const estadoInput = document.getElementById('estado');
+
+      cepInput.addEventListener('input', function () {
+          const cep = cepInput.value.replace(/\D/g, ''); // Remove caracteres não numéricos
+          if (cep.length === 8) { // Verifica se o CEP tem 8 dígitos
+              fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                  .then(response => response.json())
+                  .then(data => {
+                      if (!data.erro) {
+                          // Preenche os campos de cidade e estado com os dados do CEP
+                          cidadeInput.value = data.localidade;
+                          estadoInput.value = data.uf;
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Erro ao consultar o CEP:', error);
+                  });
+          }
+      });
+  });
+</script>
+
+
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Paciente</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <!-- <link rel="stylesheet" href="static/css/style2.css"> -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+        integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+<style type="text/css">
+  input[type="text"] { display:block; }
+</style>
+
+</head>
+<body>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert alert-info">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endwith %}
+
+	<form class="form" method="POST" action="/paciente" style="width: 420px;">
+      <div class="tlaregistro" style="height: 560px;">
+          <div style="text-align: center;">
+          <!--  <a href="https://www.casadacriancaitaporanga.com.br/" target="_blank"><img class="imglogin" src="../static/img/logo.png" alt=""></a> -->
+            <h2 style="color: black;">Cadastro de Pacientes</h2>
+          </div>
+
+          <div class="tlaregistro-grupo" style="text-align: left;">
+            <label>Nome</label>
+            <input type="text" name="nome_paciente" minlength="5"
+                   maxlength="50" placeholder="Digite o nome do Paciente" 
+                   style="width: 350px;" required="">
+           </div>
+
+           <div class="tlaregistro-grupo" style="text-align: left;">
+            <label for="sexo">Sexo</label>
+            <select id="sexo" name="sexo" required="">
+                <option value="M">Masculino</option>
+                <option value="F">Feminino</option>
+            </select>
+        </div>
+        
+
+           <div class="tlaregistro-grupo" style="text-align: left;">
+            <label>Data de Nascimento</label>
+            <input type="date" name="data_nasc" minlength="10"
+                   maxlength="10" placeholder="Digite a data de nascimento (M/F)" 
+                   style="width: 350px;" required="">
+           </div>
+
+           <div class="tlaregistro-grupo" style="text-align: left;">
+            <label>CPF</label>
+            <input type="text" id="cpf" name="cpf" minlength="14" maxlength="14" placeholder="Digite o CPF (somente números)"
+                   style="width: 350px;" required="">
+        </div>
+           
+
+          <div class="tlaregistro-grupo" style="text-align: left;">
+            <label>Logradouro</label>  
+            <input type="text" name="logradouro" minlength="1"
+                   maxlength="50" placeholder="Digite o logradouro ex: Rua Rafael vita" 
+                   style="width: 350px;" required="">
+          </div>
+
+          <div>
+            <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+            <label class="tlaregistro-grupo">Número
+            <input type="text" name="numero" minlength="1" maxlength="10" style="width: 50px;"
+                   placeholder="Nº casa" required=""> </label>
+            </div>
+            
+            <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+            <label class="tlaregistro-grupo">Bairro
+            <input type="text" name="bairro" minlength="5" maxlength="20" style="width: 283px; margin-left: 10px;" 
+            placeholder="Digite o Bairro" required=""> </label> 
+            </div>
+          </div>
+          
+          <div>
+            <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+                <label class="tlaregistro-grupo">Cep
+                <input type="text" id="cep" name="cep" maxlength="9" 
+                       style="width: 85px;" placeholder="Ex: 15955-222" required=""> </label>
+            </div>
+        
+            <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+                <label class="tlaregistro-grupo">Cidade
+                <input type="text" id="cidade" name="cidade" maxlength="20" style="width: 190px; margin-left: 10px;" 
+                       placeholder="Digite a Cidade" required=""> </label>
+            </div>
+        
+          <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+    <label class="tlaregistro-grupo">Estado</label>
+    <select id="estado" name="estado" style="width: 60px; margin-left: 10px;" required="">
+        <option value="">Selecione...</option>
+        <option value="AC">AC</option>
+        <option value="AL">AL</option>
+        <option value="AP">AP</option>
+        <option value="AM">AM</option>
+        <option value="BA">BA</option>
+        <option value="CE">CE</option>
+        <option value="DF">DF</option>
+        <option value="ES">ES</option>
+        <option value="GO">GO</option>
+        <option value="MA">MA</option>
+        <option value="MT">MT</option>
+        <option value="MS">MS</option>
+        <option value="MG">MG</option>
+        <option value="PA">PA</option>
+        <option value="PB">PB</option>
+        <option value="PR">PR</option>
+        <option value="PE">PE</option>
+        <option value="PI">PI</option>
+        <option value="RJ">RJ</option>
+        <option value="RN">RN</option>
+        <option value="RS">RS</option>
+        <option value="RO">RO</option>
+        <option value="RR">RR</option>
+        <option value="SC">SC</option>
+        <option value="SP">SP</option>
+        <option value="SE">SE</option>
+        <option value="TO">TO</option>
+    </select>
+</div>
+        
+         </div>
+
+        <div>
+            <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+              <label class="tlaregistro-grupo">Email
+              <input type="email" name="email" maxlength="40" style="width: 350px;" 
+                     placeholder="Digite o Email" required=""> </label>
+            </div>
+        </div>
+
+        <div>
+            <div class="tlaregistro-grupo" style="position: relative; float: left; text-align: left;">
+              <label class="tlaregistro-grupo">Telefone
+              <input type="text" name="telefone" maxlength="11" style="width: 350px;" 
+                     placeholder="Digite o Telefone - ex: 15 - 3565-3532" required=""> </label>
+            </div>
+        </div>
+
+        <script>
+            function validarDataNascimento() {
+                var inputDate = document.getElementsByName('data_nasc')[0].value;
+        
+                // Verificar se a data foi inserida no formato correto
+                if (!/^\d{4}-\d{2}-\d{2}$/.test(inputDate)) {
+                    alert('Por favor, insira uma data de nascimento válida no formato AAAA-MM-DD.');
+                    return false;
+                }
+        
+                var parts = inputDate.split('-');
+                var year = parseInt(parts[0], 10);
+                var month = parseInt(parts[1], 10);
+                var day = parseInt(parts[2], 10);
+        
+                // Criar um objeto Date com a data inserida
+                var inputDateObj = new Date(year, month - 1, day);
+        
+                // Verificar se a data inserida é válida
+                if (inputDateObj.getFullYear() !== year || inputDateObj.getMonth() + 1 !== month || inputDateObj.getDate() !== day) {
+                    alert('Por favor, insira uma data de nascimento válida.');
+                    return false;
+                }
+        
+                return true;
+            }
+        
+            document.querySelector('form').addEventListener('submit', function (e) {
+                if (!validarDataNascimento()) {
+                    e.preventDefault(); // Impede o envio do formulário se a data não for válida
+                }
+            });
+        </script>
+        
+
+        <div style="text-align: center; margin-top: 10px;">
+            <div class="card-group btn" style="display: inline-block;">
+                {% if current_user.is_authenticated %}
+                <button type="submit" style="width: 100px;"><b>Salvar</b></button>
+                <button type="reset" style="width: 100px;"><b>Limpar</b></button>
+                <button type="button" style="width: 100px;"><a href="{{ url_for('main.profile') }}" 
+                        style="text-decoration: none; color: black;"><b>Cancelar</b></a></button>
+                {% endif %}
+            </div>
+        </div>
+        
+      </div>
+    </form>
+</body>
+</html> 
+{% endblock %}   

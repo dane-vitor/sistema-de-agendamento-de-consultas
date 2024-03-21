@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sistema de Agendamento de Consultas</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    
+</head>
+<body>
+      <script src="../static/js/bootstrap.js"></script>
+  
+    <section class="basenavbar">
+      <nav class="navbar">
+        <div style="text-align: right;">
+
+  <!--  <a href="{{ url_for('main.index') }}" style="font-family:arial; color: #fff;">Inicio</a> -->
+            
+            {% if current_user.is_authenticated %}
+            <a class="no-print" href="{{ url_for('main.profile') }}" style="font-family:arial; color: #fff;">Principal</a>
+            {% endif %}
+           
+           
+            {% if current_user.is_authenticated %}
+            <a class="no-print" href="{{ url_for('auth.logout') }}" style="font-family:arial; color: #fff;">Sair</a>
+            {% endif %}
+
+            
+
+        </div>
+    </nav>
+        
+
+    <div>
+        <div style="text-align: center;">
+           {% block content %}
+           {% endblock %}
+        </div>
+    </div>
+    <br>
+
+    
+    </section>
+    
+    
+
+    <div vw class="enabled">
+      <div vw-access-button class="active"></div>
+      <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+        
+      </div>
+      
+    </div>
+    
+  
+    
+
+  </body>
+<footer class="no-print" style="text-align: center; font-family:arial; color: #f3f3f5;">Sistema de Agendamento de Consultas PI VI - 2024</footer>
+</html>

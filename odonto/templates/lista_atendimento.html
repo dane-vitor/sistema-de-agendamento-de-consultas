@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Atendimentos</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Lista de Atendimentos</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="data">Filtrar por Data:</label>
+                                <input type="date" id="data" name="data" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                            <button type="button" class="btn btn-primary"><a href="{{ url_for('main.agendamento') }}"><b>Voltar para agenda</b></a></button>
+                        </form>
+                        <hr>
+                        {% if data_filtrada %}
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Horário</th>
+                                        <th>Profissional</th>
+                                        <th>Paciente</th> <!-- Novo campo -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for atendimento in data_filtrada %}
+                                        <tr>
+                                            <td>{{ atendimento.data.strftime('%d/%m/%Y') }}</td>
+                                            <td>{{ atendimento.horario }}</td>
+                                            <td>{{ atendimento.profissional.nome_profissional }}</td>
+                                            <td>{{ atendimento.paciente.nome_paciente }}</td>
+                                        </tr>
+                                    {% endfor %}
+
+                                
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p>Nenhum atendimento encontrado para a data selecionada.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

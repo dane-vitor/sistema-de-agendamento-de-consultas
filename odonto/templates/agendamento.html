@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamento de Consulta</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <div class="alert alert-info">
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endwith %}
+
+    <style>
+        body {
+            background-color: #1a69dff6;
+
+        }
+        
+    </style>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="card-title">Agendamento de Consulta</h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="data">Data:</label>
+                                <input type="date" id="data" name="data" class="form-control" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="horario">Horário:</label>
+                                <select id="horario" name="horario" class="form-control" required>
+                                    <option value="" disabled selected>Selecione o horário</option>
+                                    {% for hour in range(18, 24) %}
+                                        {% for minute in ['00', '30'] %}
+                                            <option value="{{ '%02d:%02d' | format(hour|int, minute|int) }}">{{ '%02d:%02d' | format(hour|int, minute|int) }}</option>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profissional">Profissional:</label>
+                                <select id="profissional" name="profissional" class="form-control" required>
+                                    <option value="" disabled selected>Selecione o profissional</option>
+                                    {% for profissional in profissionais %}
+                                        <option value="{{ profissional.id }}">{{ profissional.nome_profissional }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="paciente">Paciente:</label>
+                                <select id="paciente" name="paciente" class="form-control" required>
+                                    <option value="" disabled selected>Selecione o paciente</option>
+                                    {% for paciente in pacientes %}
+                                        <option value="{{ paciente.id }}">{{ paciente.nome_paciente }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Agendar Consulta</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-3">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="text-center">
+                    <a href="{{ url_for('main.lista_atendimento') }}" class="btn btn-primary mr-3"><b>Lista de Atendimentos</b></a>
+                    <a href="{{ url_for('main.profile') }}" class="btn btn-primary"><b>Página Inicial</b></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ </body>
+</html>

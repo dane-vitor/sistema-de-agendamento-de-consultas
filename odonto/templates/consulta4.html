@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Consulta Cadastros</title>
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+        integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            color: rgb(8, 10, 10);
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <form class="form" method="" action="" style="width: fit-content;">
+        <div class="tlaregistro">
+            <div style="text-align: center;">
+                <a target="_blank"><img class="imglogin" src="../static/img/logo.png" alt=""></a>
+                <h2 style="color: black;">Consulta Cadastro de Profissionais</h2>
+            </div>
+            <div style="text-align: left;">
+                <button type="button" class="btn btn-primary" style="width: 100px;">
+                    <a href="{{ url_for('main.profile') }}" style="text-decoration:none;"><b>Voltar</b></a>
+                </button>
+                <br>
+                <br>
+                <br>
+            </div>
+            <!-- Campo de filtro por nome -->
+            <div style="margin-bottom: 20px;">
+                <label for="filtroNome">Filtrar por Nome:</label>
+                <input type="text" id="filtroNome" name="filtroNome" style="width: 400px;" placeholder="Digite o nome do profissional">
+                <button type="button" class="btn btn-primary" onclick="filtrarPorNome()">Filtrar</button>
+            </div>
+
+            <div>
+                <button type="button" class="btn btn-primary" >
+                    <a href="{{ url_for('main.profissional') }}"><b>Novo Profissional</b></a>
+                </button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Sexo</th>
+                        <th scope="col">Data Nascimento</th>
+                        <th scope="col">CPF</th>
+                        <th scope="col">CRO</th>
+                        <th scope="col">Opções</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dado in profissional %}
+                    <tr class="profissional-row">
+                        <td class="nome-profissional">{{dado.nome_profissional}}</td>
+                        <td>{{dado.sexo}}</td>
+                        <td>{{dado.data_nasc}}</td>
+                        <td>{{dado.cpf}}</td>
+                        <td>{{dado.cro}}</td>
+                        <td>
+                            
+                            <a href="/visualizar4/{{ dado.id }}" style="text-decoration: none; background-color: rgb(23, 9, 212);">Visualizar</a> |
+                            <a href="/atualizar4/{{ dado.id }}" style="text-decoration: none; background-color: aqua;">Editar</a> |
+                            <a href="/excluir4/{{ dado.id }}" style="text-decoration: none; background-color: crimson;">Excluir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+      
+        
+        <script>
+            function filtrarPorNome() {
+                const filtro = document.getElementById('filtroNome').value.toLowerCase(); // Obtém o valor do filtro em minúsculas
+                const linhas = document.querySelectorAll('.paciente-row'); // Obtém todas as linhas de pacientes
+        
+                linhas.forEach(linha => {
+                    const nomeProfissional = linha.querySelector('.nome-profissional').textContent.toLowerCase(); // Obtém o nome do paciente em minúsculas
+                    if (nomeProfissional.includes(filtro)) { // Verifica se o nome do paciente contém o texto do filtro
+                        linha.style.display = 'table-row'; // Mostra a linha se o nome corresponder ao filtro
+                    } else {
+                        linha.style.display = 'none'; // Esconde a linha se o nome não corresponder ao filtro
+                    }
+                });
+            }
+        </script>
+    </form>
+</body>
+</html>
